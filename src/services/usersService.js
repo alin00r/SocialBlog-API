@@ -87,7 +87,6 @@ const updateLoggedUserPassword = async (req, res, next) => {
   if (!user) {
     return next(new AppError(`No document for this id ${req.params.id}`, 404));
   }
-  return user;
 };
 //@desc  Update Logged User data (without password,role)
 //@route PUT /api/v1/users/updateMyData
@@ -106,7 +105,11 @@ const updateLoggedUserData = async (req, res, next) => {
   if (!updatedUser) {
     return next(new AppError(`No document for this id ${req.params.id}`, 404));
   }
-  return updatedUser;
+  return {
+    name: updatedUser.name,
+    email: updatedUser.email,
+    profileImg: updatedUser.profileImg,
+  };
 };
 
 //@desc  Delete logged user data (soft delete by setting active to false)
