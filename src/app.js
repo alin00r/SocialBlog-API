@@ -19,11 +19,15 @@ app.use(express.json());
 
 // Routes
 app.use('/swagger-assets', express.static(swaggerUiAsset.getAbsoluteFSPath()));
+app.get('/swagger.json', (req, res) => {
+  res.json(specs);
+});
 app.use(
   '/api-docs',
   swaggerUI.serve,
-  swaggerUI.setup(specs, {
+  swaggerUI.setup(undefined, {
     swaggerOptions: {
+      url: '/swagger.json',
       persistAuthorization: true,
       displayRequestDuration: true,
     },
