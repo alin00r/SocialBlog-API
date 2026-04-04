@@ -44,7 +44,7 @@ exports.getOne = (Model, populationOpts = '') =>
     // 1) Build Query
     let query = Model.findById(id);
 
-    if (Model.modelName === 'user') {
+    if (Model.modelName === 'User') {
       const excludedFields = [
         '-password',
         '-passwordResetCode',
