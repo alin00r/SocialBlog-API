@@ -96,6 +96,7 @@ const resetPassword = async (email, newPassword) => {
     throw new AppError('Reset code not verified', 400);
   }
   user.password = newPassword;
+  user.passwordChangedAt = Date.now();
   user.passwordResetVerified = undefined;
   user.passwordResetCode = undefined;
   user.passwordResetExpires = undefined;
