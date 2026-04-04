@@ -62,11 +62,13 @@ const handleValidationErrorDB = (err) => {
   return new AppError(message, 400);
 };
 
-const handleJwtInvalidSignature = () =>
-  new AppError('Invalid token, please login again...', 401);
+const handleJwtInvalidSignature = () => {
+  return new AppError('Invalid token, please login again...', 401);
+};
 
-const handleJwtExpiredError = () =>
-  new AppError('Expired token, please login again...', 401);
+const handleJwtExpiredError = () => {
+  return new AppError('Expired token, please login again...', 401);
+};
 
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
