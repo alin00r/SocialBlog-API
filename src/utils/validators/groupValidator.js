@@ -1,7 +1,7 @@
 const Joi = require('joi');
-const JoiObjectId = require('joi-objectid')(joi);
+const JoiObjectId = require('joi-objectid')(Joi);
 
-const groupSchema = Joi.object({
+const groupBaseSchema = Joi.object({
   title: Joi.string().min(3).max(50).required().messages({
     'string.base': 'Group title must be a string',
     'string.empty': 'Group title cannot be empty',
@@ -16,8 +16,8 @@ const groupSchema = Joi.object({
     'string.max': 'Group description must be less than 200 characters long',
     'any.required': 'Group description is required',
   }),
-  groupPicture: Joi.string().optional(),
-  groupPictureId: Joi.string().optional(),
+  groupImg: Joi.string().optional(),
+  groupImgId: Joi.string().optional(),
   admins: Joi.array().items(JoiObjectId()).optional().messages({
     'string.hex': 'Admin ID must be a hexadecimal string',
     'string.length': 'Admin ID must be 24 characters long',
@@ -51,7 +51,36 @@ const groupSchema = Joi.object({
     .optional(),
 });
 
-const addUserToGroupSchema = groupSchema.keys({
+const createGroupSchema = groupBaseSchema.keys({});
+
+const updateGroupSchema = groupBaseSchema.keys({
+  title: Joi.string().min(3).max(50).optional().messages({
+    'string.base': 'Group title must be a string',
+    'string.min': 'Group title must be at least 3 characters long',
+    'string.max': 'Group title must be less than 50 characters long',
+  }),
+  description: Joi.string().min(10).max(200).optional().messages({
+    'string.base': 'Group description must be a string',
+    'string.min': 'Group description must be at least 10 characters long',
+    'string.max': 'Group description must be less than 200 characters long',
+  }),
+  groupImg: Joi.string().optional(),
+  groupImgId: Joi.string().optional(),
+  admins: Joi.array().items(JoiObjectId()).optional(),
+  members: Joi.array().items(JoiObjectId()).optional(),
+  memberPermissions: Joi.array()
+    .items(
+      Joi.object({
+        user: JoiObjectId().required(),
+        permissions: Joi.array()
+          .items(Joi.string().valid('read', 'write', 'delete'))
+          .required(),
+      }),
+    )
+    .optional(),
+});
+
+const addUserToGroupSchema = Joi.object({
   userId: JoiObjectId().required().messages({
     'string.hex': 'User ID must be a hexadecimal string',
     'string.length': 'User ID must be 24 characters long',
@@ -59,7 +88,13 @@ const addUserToGroupSchema = groupSchema.keys({
   }),
 });
 
-const removeUserFromGroupSchema = addUserToGroupSchema;
+const removeUserFromGroupSchema = Joi.object({
+  userId: JoiObjectId().required().messages({
+    'string.hex': 'User ID must be a hexadecimal string',
+    'string.length': 'User ID must be 24 characters long',
+    'any.required': 'User ID is required',
+  }),
+});
 
 const managePermissionsSchema = Joi.object({
   userId: JoiObjectId().required().messages({
@@ -84,7 +119,8 @@ const managePermissionsSchema = Joi.object({
 });
 
 module.exports = {
-  groupSchema,
+  createGroupSchema,
+  updateGroupSchema,
   addUserToGroupSchema,
   removeUserFromGroupSchema,
   managePermissionsSchema,

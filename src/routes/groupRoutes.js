@@ -15,16 +15,36 @@ const {
 } = require('../controllers/groupController');
 const protect = require('../middlewares/protectMiddlware');
 const restrictTo = require('../middlewares/restrictTo');
+const validateRequest = require('../middlewares/validatorMiddleware');
+const {
+  createGroupSchema,
+  updateGroupSchema,
+  addUserToGroupSchema,
+  removeUserFromGroupSchema,
+  managePermissionsSchema,
+} = require('../utils/validators/groupValidator');
 
 router
   .route('/')
-  .post(protect, uploadGroupImage, uploadGroupImageToImageKit, createGroup)
+  .post(
+    protect,
+    uploadGroupImage,
+    uploadGroupImageToImageKit,
+    validateRequest(createGroupSchema),
+    createGroup,
+  )
   .get(protect, restrictTo('super-admin'), getAllGroups);
 
 router
   .route('/:groupId')
   .get(protect, getGroup)
-  .put(protect, uploadGroupImage, uploadGroupImageToImageKit, updateGroup)
+  .put(
+    protect,
+    uploadGroupImage,
+    uploadGroupImageToImageKit,
+    validateRequest(updateGroupSchema),
+    updateGroup,
+  )
   .delete(protect, deleteGroup);
 
 router.post(
@@ -32,11 +52,27 @@ router.post(
   protect,
   uploadGroupImage,
   uploadGroupImageToImageKit,
+  validateRequest(updateGroupSchema),
   updateGroup,
 );
 
-router.post('/:groupId/users', protect, addUserToGroup);
-router.delete('/:groupId/users/:userId', protect, removeUserFromGroup);
-router.put('/:groupId/permissions', protect, managePermissions);
+router.post(
+  '/:groupId/users',
+  protect,
+  validateRequest(addUserToGroupSchema),
+  addUserToGroup,
+);
+router.delete(
+  '/:groupId/users/:userId',
+  protect,
+  validateRequest(removeUserFromGroupSchema),
+  removeUserFromGroup,
+);
+router.put(
+  '/:groupId/permissions',
+  protect,
+  validateRequest(managePermissionsSchema),
+  managePermissions,
+);
 
 module.exports = router;
