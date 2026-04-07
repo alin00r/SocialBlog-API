@@ -76,7 +76,7 @@ Node.js REST API for blogging, user management, group collaboration, and Swagger
 
 The application creates a default super-admin user from the values in `.env` when the database connection starts.
 
-- Admin email: `admin@blog.comL`
+- Admin email: `admin@blog.com`
 - Admin password: `@#admin123@#`
 
 Use the same values you set in `.env` when logging in or testing the admin endpoints.
